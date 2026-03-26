@@ -1,4 +1,16 @@
-mongoose
-Monocypher
-raylib
-miniz
+```
+# Environment
+.env
+.env.local
+.env.*
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Editors
+.vscode/
+
+# Original rules preserved
+*.log
+```

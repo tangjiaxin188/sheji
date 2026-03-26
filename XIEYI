@@ -1,21 +1,105 @@
+// ==================== 注册流程 ====================
 {
     "COMMAND":"SIGNUP_ACCEPT",
-    "data":"{\"pub_key\":\"xxx\"}",
-},//client 注册请求
-{
-    "COMMAND":"SIGNUP_CHECK",
-    "data":"{\"check_data\":\"xxx\"}"
-},//server 注册验证
-{
-    "COMMAND":"SIGNUP_CHECK",
-    "data":"{\"check_data\":\"xxx\"}"
-}//client 注册验证
-{
-    "COMMAND":"SIGUP_AGREE",
-    "data":"{\"id\":xx}"
-}//server 成功返回id的哈希值，否则返回0的哈希值
-//注册
+    "data":"{\"pub_key\":\"xxx\"}"
+},//client 注册请求，发送公钥给服务器
 
 {
-    "COMMAND":""
-}
+    "COMMAND":"SIGNUP_CHECK",
+    "data":"{\"check_data\":\"xxx\"}"
+},//server 注册验证，发送随机挑战数据
+
+{
+    "COMMAND":"SIGNUP_CHECK",
+    "data":"{\"check_data\":\"xxx\"}"
+},//client 注册验证响应，用私钥签名挑战数据
+
+{
+    "COMMAND":"SIGNUP_AGREE",
+    "data":"{\"id\":xx}"
+},//server 注册成功返回用户 ID，失败返回 0
+
+// ==================== 认证流程（替代登录） ====================
+{
+    "COMMAND":"AUTH_REQUEST",
+    "data":"{\"client_id\":\"xxx\"}"
+},//client 发起认证请求，发送客户端 ID
+
+{
+    "COMMAND":"AUTH_CHALLENGE",
+    "data":"{\"challenge_data\":\"xxx\"}"
+},//server 认证质询，发送原始挑战数据
+
+{
+    "COMMAND":"AUTH_RESPONSE",
+    "data":"{\"client_id\":\"xxx\",\"signature\":\"xxx\"}"
+},//client 认证响应，用私钥对挑战数据签名后返回
+
+{
+    "COMMAND":"AUTH_SUCCESS",
+    "data":"{\"chat_token\":\"xxx\",\"contacts\":[{\"id\":1,\"name\":\"user1\",\"online\":true},{\"id\":2,\"name\":\"user2\",\"online\":false}]}"
+},//server 认证成功，返回聊天令牌 + 通讯录列表（包含好友 ID、名称、在线状态）
+
+{
+    "COMMAND":"AUTH_FAIL",
+    "data":"{\"reason\":\"xxx\"}"
+},//server 认证失败，返回原因
+
+// ==================== 通讯录管理 ====================
+{
+    "COMMAND":"CONTACTS_UPDATE",
+    "data":"{\"contacts\":[{\"id\":3,\"name\":\"user3\",\"online\":true}]}"
+},//server 主动推送通讯录更新（好友上线/下线/新增）
+
+{
+    "COMMAND":"CONTACTS_REQUEST",
+    "data":"{}"
+},//client 主动请求刷新通讯录
+
+{
+    "COMMAND":"CONTACTS_RESPONSE",
+    "data":"{\"contacts\":[{\"id\":1,\"name\":\"user1\",\"online\":true}]}"
+},//server 返回完整通讯录列表
+
+// ==================== 心跳保活机制 ====================
+{
+    "COMMAND":"HEARTBEAT_REQUEST",
+    "data":"{\"timestamp\":1234567890}"
+},//client 定时发送心跳请求（建议间隔 30-60 秒），携带当前时间戳
+
+{
+    "COMMAND":"HEARTBEAT_RESPONSE",
+    "data":"{\"timestamp\":1234567890,\"contacts_update\":[{\"id\":2,\"name\":\"user2\",\"online\":true}]}"
+},//server 响应心跳，返回相同时间戳用于计算延迟，同时可选推送此期间的好友状态变更
+
+{
+    "COMMAND":"HEARTBEAT_TIMEOUT",
+    "data":"{}"
+},//server 检测到客户端超时未心跳，主动断开连接前的通知（可选）
+
+// ==================== 聊天/文件发送流程 ====================
+{
+    "COMMAND":"CHAT_SEND",
+    "data":"{\"target_id\":xx,\"chat_token\":\"xxx\",\"content_type\":\"text/bin\",\"content\":\"base64_encoded_data\"}"
+},//client 发送聊天内容或文件：目标用户 ID、聊天令牌、内容类型（text=文本/bin=二进制）、base64 编码的内容
+
+{
+    "COMMAND":"CHAT_FORWARD",
+    "data":"{\"sender_id\":xx,\"sender_name\":\"xxx\",\"content_type\":\"text/bin\",\"content\":\"base64_encoded_data\",\"timestamp\":1234567890}"
+},//server 转发消息给目标客户端：发送方 ID、名称、内容类型、内容、时间戳
+
+{
+    "COMMAND":"CHAT_RECEIVE",
+    "data":"{\"sender_id\":xx,\"content_type\":\"text/bin\",\"content\":\"base64_encoded_data\"}"
+},//client 接收消息（与 CHAT_FORWARD 格式相同，客户端视角）
+
+{
+    "COMMAND":"SEND_FILE_ACK",
+    "data":"{\"file_id\":\"xxx\",\"status\":\"success/fail\",\"msg\":\"optional_message\"}"
+},//接收方确认文件接收成功或失败
+
+// ==================== 通用错误响应 ====================
+{
+    "COMMAND":"ERROR",
+    "data":"{\"error_code\":xx,\"error_msg\":\"xxx\",\"command\":\"failed_command\"}"
+}//通用错误响应：错误码、错误信息、失败的命令
