@@ -98,6 +98,44 @@
     "data":"{\"file_id\":\"xxx\",\"status\":\"success/fail\",\"msg\":\"optional_message\"}"
 },//接收方确认文件接收成功或失败
 
+// ==================== 分块文件传输协议 ====================
+// 用于传输大文件（>64KB），避免单次 JSON 过大
+
+{
+    "COMMAND":"FILE_TRANSFER_START",
+    "data":"{\"file_id\":\"xxx\",\"file_name\":\"xxx\",\"file_size\":123456,\"content_type\":\"bin\",\"chunk_size\":65536,\"total_chunks\":5}"
+},//client 通知服务器开始传输文件：文件 ID、文件名、总大小、内容类型、每块大小、总块数
+
+{
+    "COMMAND":"FILE_TRANSFER_ACK",
+    "data":"{\"file_id\":\"xxx\",\"status\":\"ready\",\"next_chunk\":0}"
+},//server 确认可以开始传输，返回期望的起始块索引
+
+{
+    "COMMAND":"FILE_TRANSFER_CHUNK",
+    "data":"{\"file_id\":\"xxx\",\"chunk_index\":0,\"chunk_size\":65536,\"content\":\"base64_encoded_data\"}"
+},//client 发送文件块：文件 ID、当前块索引、块大小、base64 编码的数据
+
+{
+    "COMMAND":"FILE_TRANSFER_CHUNK_ACK",
+    "data":"{\"file_id\":\"xxx\",\"chunk_index\":0,\"status\":\"received\",\"next_chunk\":1}"
+},//server 确认收到块：文件 ID、块索引、状态、期望的下一块索引
+
+{
+    "COMMAND":"FILE_TRANSFER_END",
+    "data":"{\"file_id\":\"xxx\",\"checksum\":\"md5_or_sha1\"}"
+},//client 通知文件传输完成，发送校验和
+
+{
+    "COMMAND":"FILE_TRANSFER_COMPLETE",
+    "data":"{\"file_id\":\"xxx\",\"status\":\"success/fail\",\"msg\":\"optional_message\"}"
+},//server 确认文件完整接收，或报告错误
+
+{
+    "COMMAND":"FILE_TRANSFER_RESEND",
+    "data":"{\"file_id\":\"xxx\",\"chunk_index\":2,\"reason\":\"checksum_error\"}"
+},//server 请求重传特定块（可选）
+
 // ==================== 通用错误响应 ====================
 {
     "COMMAND":"ERROR",
