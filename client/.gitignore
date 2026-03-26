@@ -1,0 +1,17 @@
+# 忽略 build 目录
+build/
+Build/
+BUILD/
+
+# 编译产物
+*.o
+*.a
+*.so
+*.dylib
+
+# IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
