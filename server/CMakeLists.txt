@@ -13,5 +13,6 @@ add_executable(mongoose_demo
     src/monocypher.c
     src/monocypher-ed25519.c
     src/main.c
+    src/lib.c
     src/miniz.c
 )
