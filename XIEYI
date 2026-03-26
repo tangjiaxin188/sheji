@@ -1,0 +1,21 @@
+{
+    "COMMAND":"SIGNUP_ACCEPT",
+    "data":"{\"pub_key\":\"xxx\"}",
+},//client 注册请求
+{
+    "COMMAND":"SIGNUP_CHECK",
+    "data":"{\"check_data\":\"xxx\"}"
+},//server 注册验证
+{
+    "COMMAND":"SIGNUP_CHECK",
+    "data":"{\"check_data\":\"xxx\"}"
+}//client 注册验证
+{
+    "COMMAND":"SIGUP_AGREE",
+    "data":"{\"id\":xx}"
+}//server 成功返回id的哈希值，否则返回0的哈希值
+//注册
+
+{
+    "COMMAND":""
+}
