@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "mongoose.h"
-#include "miniz.h"
+#include "easy_miniz.h"
 #include "lib.h"
 
 // ==================== 函数声明 ====================
