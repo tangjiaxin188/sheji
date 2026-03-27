@@ -15,4 +15,5 @@ add_executable(mongoose_demo
     src/main.c
     src/lib.c
     src/miniz.c
+    src/easy_miniz.c
 )
